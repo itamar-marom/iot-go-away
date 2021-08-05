@@ -11,6 +11,7 @@
 // defines variables
 long duration; // variable for the duration of sound wave travel
 int distance; // variable for the distance measurement
+bool isSent = false; // For not spamming the user
 
 void setup() {
   Serial.begin(9600); // // Serial Communication is starting with 9600 of baudrate speed
@@ -62,6 +63,7 @@ void loop() {
     Serial.println(" cm");
 	  digitalWrite(RELAY, LOW);
 	  digitalWrite(sms, LOW);
+    isSent = false;
   } else {
     Serial.println("object detected");
     // Displays the distance on the Serial Monitor
@@ -69,8 +71,11 @@ void loop() {
     Serial.print(distance);
     Serial.println(" cm");
     digitalWrite(RELAY, HIGH); // Turn on the Light bulb
-    digitalWrite(sms, HIGH); // Send SMS to the user and data to cloud
-    SendMessage();  // Send a message to your owner
+    if (!isSent) {
+    	digitalWrite(sms, HIGH); // Send SMS to the user and data to cloud
+      SendMessage();  // Send a message to your owner
+      isSent = true;
+    }  
   }
 
 }

@@ -6,6 +6,7 @@
 // defines variables
 long duration; // variable for the duration of sound wave travel
 int distance; // variable for the distance measurement
+bool isSent = false; // For not spamming the user
 
 void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
@@ -19,7 +20,6 @@ void setup() {
 }
 
 void loop() {
-//  digitalWrite(cloud, HIGH);
   // Clears the trigPin condition
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -31,7 +31,7 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
   distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
-
+  
   if (distance >= 200 || distance <= 0) 
   {
     Serial.println("no object detected");
@@ -41,6 +41,7 @@ void loop() {
     Serial.println(" cm");
 	  digitalWrite(RELAY, LOW);
 	  digitalWrite(sms, LOW);
+    isSent = false;
   } else {
     Serial.println("object detected");
     // Displays the distance on the Serial Monitor
@@ -48,7 +49,9 @@ void loop() {
     Serial.print(distance);
     Serial.println(" cm");
     digitalWrite(RELAY, HIGH); // Turn on the Light bulb
-    digitalWrite(sms, HIGH); // Send SMS to the user and data to cloud
+    if (!isSent) {
+    	digitalWrite(sms, HIGH); // Send SMS to the user and data to cloud
+        isSent = true;
+    }  
   }
-
 }
